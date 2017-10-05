@@ -1,0 +1,14 @@
+//Gets all players on a team 
+
+select pr.first, pr.last
+from team tm
+join player pl
+	on tm.id = pl.team
+join person pr
+	on pl.person = pr.id
+where tm.id = 1
+
+
+//Insert person and player
+INSERT INTO `dmahockey`.`person` (`first`, `last`) VALUES ('John', 'Doe');
+INSERT INTO `dmahockey`.`player` (`person`, `team`) VALUES ('2', '1'); 	//person, team

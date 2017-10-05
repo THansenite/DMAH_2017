@@ -116,12 +116,17 @@
 	$query = "SELECT date_format(sched.date,'%c/%e/%y') as 'date',
 				time_format(sched.time,'%h:%i %p') as 'time',
 				team1.name as 'home',
-				team2.name as 'away'
+				team2.name as 'away',
+				g.result as 'outcome', 
+				g.home_score as 'home_score', 
+				g.away_score as 'away_score' 
 			from schedule sched
 			join team team1 
 				on sched.home = team1.id
 			join team team2
 				on sched.away = team2.id
+			left join game g
+				on sched.id = g.id
 		where team1.season = 9 and team2.season = 9
         order by sched.date, sched.time";
 	$result = mysqli_query($connection, $query) or die("Query failed");
@@ -130,52 +135,56 @@
 		$time = $row['time'];
 		$home = $row['home'];
 		$away = $row['away'];
-		//$outcome = $row['outcome'];
-		//$home_score = $row['home_score'];
-		//$away_score = $row['away_score'];
+		$outcome = $row['outcome'];
+		$home_score = $row['home_score'];
+		$away_score = $row['away_score'];
 		echo "<tr><td align=center>";
 		echo htmlentities($date);
 		echo "</td><td align=center>";
 		echo htmlentities($time);
 		echo "</td><td align=center>";
-		// if ($home_score > $away_score || $outcome == 'A_SOL' || $outcome == 'A_FOR') {
-		// 	echo "<strong>";
-		// 	echo htmlentities($home);
-		// 	echo "</strong>";
-		// }
-		// else
-		// {
+		if ($home_score > $away_score || $outcome == 2 || $outcome == 4) {
+			echo "<strong>";
+			echo htmlentities($home);
+			echo "</strong>";
+		}
+		else
+		{
 		 	echo htmlentities($home);
-		// }
+		}
 		 echo "</td><td align=center>";
-		// if ($home_score < $away_score || $outcome == 'H_SOL' || $outcome == 'H_FOR') {
-		// 	echo "<strong>";
-		// 	echo htmlentities($away);
-		// 	echo "</strong>";
-		// }
-		// else
-		// {
+		if ($home_score < $away_score || $outcome == 1 || $outcome == 3) {
+			echo "<strong>";
+			echo htmlentities($away);
+			echo "</strong>";
+		}
+		else
+		{
 		 	echo htmlentities($away);
-		// }
+		}
 		 echo "</td><td align=center>";
-		// if (is_null($outcome))
-		// {
+		if (is_null($outcome))
+		{
 		 	echo "";
-		// }
-		// else
-		// {
-		// 	echo htmlentities($home_score);
-		// 	echo " - ";
-		// 	echo htmlentities($away_score);
-		// 	if ($outcome == 'H_SOL' || $outcome == 'A_SOL') 
-		// 	{
-		// 		echo " (SO)";
-		// 	}
-		// 	if ($outcome == 'H_FOR' || $outcome == 'A_FOR') 
-		// 	{
-		// 		echo " (F)";
-		// 	}
-		// }
+		}
+		else
+		{
+			echo htmlentities($home_score);
+			echo " - ";
+			echo htmlentities($away_score);
+			if ($outcome == 1 || $outcome == 2) 
+			{
+				echo " (SO)";
+			}
+			if ($outcome == 3 || $outcome == 4) 
+			{
+				echo " (F)";
+			}
+			if ($outcome == 5) 
+			{
+				echo " (T)";
+			}
+		}
 		echo "</td></tr>";
 	}
 	mysqli_free_result($result);
